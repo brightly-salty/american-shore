@@ -18,7 +18,7 @@ main = hakyllWith config $ do
     match (fromList ["about.md", "contact.md", "midterms.md"]) $ do
         route   $ setExtension "html"
         compile $ pandocCompiler
-            >>= loadAndApplyTemplate "templates/default.html" defaultContext
+            >>= loadAndApplyTemplate "templates/default.html" (defaultContext <> constField "root" "https://brightly-salty.github.io/american-shore")
             >>= relativizeUrls
 
     match "posts/*" $ do
@@ -33,8 +33,9 @@ main = hakyllWith config $ do
         compile $ do
             posts <- recentFirst =<< loadAll "posts/*"
             let archiveCtx =
-                    listField "posts" postCtx (return posts) `mappend`
-                    constField "title" "Archives"            `mappend`
+                    listField "posts" postCtx (return posts) <>
+                    constField "title" "Archives"            <>
+                    constField "root" "https://brightly-salty.github.io/american-shore" <>
                     defaultContext
 
             makeItem ""
@@ -48,7 +49,8 @@ main = hakyllWith config $ do
         compile $ do
             posts <- recentFirst =<< loadAll "posts/*"
             let indexCtx =
-                    listField "posts" postCtx (return posts) `mappend`
+                    listField "posts" postCtx (return posts) <>
+                    constField "root" "https://brightly-salty.github.io/american-shore" <>
                     defaultContext
 
             getResourceBody
@@ -61,7 +63,8 @@ main = hakyllWith config $ do
 --------------------------------------------------------------------------------
 postCtx :: Context String
 postCtx =
-    dateField "date" "%B %e, %Y" `mappend`
+    dateField "date" "%B %e, %Y" <>
+    constField "root" "https://brightly-salty.github.io/american-shore" <>
     defaultContext
 
 config :: Configuration
